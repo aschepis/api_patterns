@@ -33,6 +33,14 @@ func ForbiddenError() *APIError {
 	}
 }
 
+// wrapper to generate api error for Forbidden errors
+func NotFoundError() *APIError {
+	return &APIError{
+		Message:    fmt.Sprintf("Not Found"),
+		StatusCode: http.StatusNotFound,
+	}
+}
+
 // helper for generating api error objects
 func MakeAPIError(err error, code int) *APIError {
 	return &APIError{
