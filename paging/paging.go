@@ -14,11 +14,14 @@ type ResultsPage struct {
 
 type pageScanFunc func(rows *sql.Rows) (interface{}, error)
 
-func defaultPagingParam(strValue string, defaultValue uint64) uint64 {
+func defaultPagingParam(strValue []string, defaultValue uint64) uint64 {
 	if len(strValue) > 0 {
-		val, err := strconv.Atoi(strValue)
-		if err != nil {
-			return uint64(val)
+		queryValue := strValue[0]
+		if len(queryValue) > 0 {
+			val, err := strconv.Atoi(queryValue)
+			if err == nil {
+				return uint64(val)
+			}
 		}
 	}
 
@@ -26,8 +29,9 @@ func defaultPagingParam(strValue string, defaultValue uint64) uint64 {
 }
 
 func PagingParams(r *http.Request) (page, pageSize uint64) {
-	pageSize = defaultPagingParam(r.Form.Get("page"), 20)
-	page = defaultPagingParam(r.Form.Get("page_size"), 0)
+	queryParams := r.URL.Query()
+	pageSize = defaultPagingParam(queryParams["page_size"], 20)
+	page = defaultPagingParam(queryParams["page"], 0)
 	return
 }
 
