@@ -10,8 +10,8 @@ import (
 // error type suitable for returning to
 type APIError struct {
 	err        error
-	Message    string `json:"message"`
-	StatusCode int    `json:"-"`
+	Message    interface{} `json:"message"`
+	StatusCode int         `json:"-"`
 }
 
 // a function type that returns an APIError
@@ -45,6 +45,18 @@ func NotFoundError() *APIError {
 func MakeAPIError(err error, code int) *APIError {
 	return &APIError{
 		Message:    err.Error(),
+		StatusCode: code,
+	}
+}
+
+// helper for generating api error objects
+func MakeDetailedAPIError(err error, code int, details interface{}) *APIError {
+	errorMap := map[string]interface{}{
+		"error":   err.Error(),
+		"details": details,
+	}
+	return &APIError{
+		Message:    errorMap,
 		StatusCode: code,
 	}
 }
